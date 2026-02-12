@@ -1,4 +1,4 @@
-# 🕷️ SPIDEY-SQL v2.0 latest
+# 🕷️ SPIDEY-SQL v2.0 latest V
 
 ## Enterprise-Grade SQL Injection Testing Framework
 
