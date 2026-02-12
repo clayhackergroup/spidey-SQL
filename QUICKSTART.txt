@@ -1,0 +1,177 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                    SPIDEY-SQL QUICK REFERENCE                       ║
+╚════════════════════════════════════════════════════════════════════╝
+
+INSTALLATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  pip install requests
+
+3 CORE TOOLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. spidey.py       - SQL Injection Scanner
+  2. extractor.py    - Database Data Extraction
+  3. waf_bypass.py   - WAF Detection & Bypass
+
+BASIC USAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  # Scan single parameter
+  python3 spidey.py -u http://target.com/search?q=test -p q
+
+  # Test multiple parameters  
+  python3 spidey.py -u http://target.com -p id -p name -p email
+
+  # Fast parallel scan (20 threads)
+  python3 spidey.py -u http://target.com -p id --threads 20
+
+  # Extract database information
+  python3 extractor.py -u http://target.com -p id
+
+  # Detect WAF
+  python3 waf_bypass.py -u http://target.com --detect-only
+
+COMMON PARAMETERS TO TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  id, user_id, product_id, q, search, query, username, email,
+  name, category, filter, sort, page, login, password, admin,
+  file, path, url, ref, from, to
+
+SPIDEY.PY OPTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  -u, --url           Target URL (required)
+  -p, --param         Parameter to test (use multiple times)
+  -t, --timeout       Request timeout (default: 10)
+  --threads           Number of parallel threads (default: 10)
+  --time              Time-based delay seconds (default: 4)
+  --export            Save results to JSON
+  -v, --verbose       Show all attempts
+
+EXTRACTOR.PY OPTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  -u, --url           Target URL (required)
+  -p, --param         Vulnerable parameter (required)
+  -m, --method        HTTP method: GET or POST
+  --db                Database type: mysql, postgresql, mssql, oracle
+  -t, --timeout       Request timeout
+  --export            Save extracted data to JSON
+
+WAF_BYPASS.PY OPTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  -u, --url           Target URL (required)
+  -p, --param         Parameter to bypass
+  -d, --detect-only   Only detect WAF
+  -t, --timeout       Request timeout
+
+ADVANCED EXAMPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  # Aggressive 50-thread scan with export
+  python3 spidey.py -u http://target.com -p id --threads 50 --export results.json
+
+  # Slow server with increased timeout
+  python3 spidey.py -u http://target.com -p id -t 20 --time 6
+
+  # PostgreSQL database extraction
+  python3 extractor.py -u http://target.com -p id --db postgresql --export dump.json
+
+  # POST method with multiple parameters
+  python3 spidey.py -u http://target.com -p user -p pass -m post
+
+  # Verbose mode for debugging
+  python3 spidey.py -u http://target.com -p id -v
+
+PENETRATION TESTING WORKFLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Detect WAF:
+     python3 waf_bypass.py -u http://target.com --detect-only
+
+  2. Scan for vulnerabilities:
+     python3 spidey.py -u http://target.com -p id --export scan.json
+
+  3. Extract data (if vulnerable):
+     python3 extractor.py -u http://target.com -p id --export data.json
+
+  4. Generate report from JSON files
+
+SQL INJECTION TYPES TESTED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ Error-Based      - Direct error message extraction
+  ✓ UNION-Based      - Multi-table data extraction  
+  ✓ Time-Based       - Delay-based blind extraction
+  ✓ Boolean-Based    - True/false response comparison
+  ✓ Stacked Queries  - Multiple statement execution
+
+SUPPORTED DATABASES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ MySQL/MariaDB    ✓ PostgreSQL    ✓ MSSQL (SQL Server)
+  ✓ Oracle           ✓ SQLite
+
+DETECTED WAFES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Cloudflare    Imperva         ModSecurity    F5 (BigIP)
+  Akamai        Sucuri          Barracuda      AWS WAF
+
+OUTPUT EXAMPLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [✓] VULNERABLE: id -> Error-Based
+  [✓] VULNERABLE: id -> UNION-Based
+  [✓] VULNERABLE: id -> Time-Based (4.23s)
+  [✓] VULNERABLE: id -> Boolean-Based
+
+LEGAL NOTICE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ Only test on systems you own or have written permission
+  ✓ Unauthorized access is ILLEGAL
+  ✓ Use for ethical penetration testing only
+  ✓ Always follow responsible disclosure
+
+TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  No vulnerabilities?
+    → Parameter might use prepared statements
+    → WAF might be blocking
+    → Try -v flag for verbose mode
+
+  Connection timeout?
+    → Server is slow: use -t 20
+    → Network issue or server down
+
+  Time-based tests fail?
+    → Reduce threads: --threads 5
+    → Increase delay: --time 6
+
+SPIDEY-SQL ADVANTAGES OVER SQLMAP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ⚡ 5-10x Faster          🎯 Beginner-Friendly
+  📦 Clean Code (~800 LOC) 🔧 Easy to Customize
+  ⚙️  Multi-Threading      📊 Better Data Extraction
+  🛡️  Advanced WAF Bypass  📈 Professional Reports
+  🕷️ Purpose-Built for SQLi
+
+HELP & MORE INFO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  python3 spidey.py -h
+  python3 extractor.py -h
+  python3 waf_bypass.py -h
+
+  Read README.md for comprehensive guide
+  Read TOOLS.md for detailed tool information
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SPIDEY-SQL v2.0 - Where Speed Meets Power 🕷️
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

